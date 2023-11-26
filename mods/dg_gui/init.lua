@@ -8,3 +8,8 @@ minetest.register_on_joinplayer(function(player)
 	]]
 	player:set_formspec_prepend(formspec)
 end)
+
+minetest.register_on_newplayer(function(player)
+	local currpos = player:get_pos()
+	player:set_pos(vector.new(currpos.x, currpos.y + 20, currpos.z))
+end)
