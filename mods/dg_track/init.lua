@@ -56,21 +56,24 @@ local np_blend = {
 
 -- Nodes
 
-minetest.register_node("track:road_black", {
+minetest.register_node("dg_track:road_black", {
 	description = "Road Black",
-	tiles = {"track_road_black.png"},
+	tiles = {"dg_track_road_black.png"},
 	is_ground_content = false,
 	groups = {cracky = 3},
 })
 
-minetest.register_node("track:road_white", {
+minetest.register_node("dg_track:road_white", {
 	description = "Road White",
-	tiles = {"track_road_white.png"},
+	tiles = {"dg_track_road_white.png"},
 	paramtype = "light",
 	light_source = 12,
 	is_ground_content = false,
 	groups = {cracky = 3},
 })
+
+minetest.register_alias("track:road_black", "dg_track:road_black")
+minetest.register_alias("track:road_white", "dg_track:road_white")
 
 
 -- Set mapgen flags to disable core mapgen decoration placement.
@@ -82,8 +85,8 @@ minetest.set_mapgen_setting("mg_flags", "caves,dungeons,light,nodecorations,biom
 
 -- Constants
 
-local c_roadblack = minetest.get_content_id("track:road_black")
-local c_roadwhite = minetest.get_content_id("track:road_white")
+local c_roadblack = minetest.get_content_id("dg_track:road_black")
+local c_roadwhite = minetest.get_content_id("dg_track:road_white")
 
 
 -- Initialise noise object, noise table, voxelmanip table
