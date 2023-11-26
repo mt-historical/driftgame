@@ -1,21 +1,24 @@
 -- Nodes
 
-minetest.register_node("trees:pine_trunk", {
+minetest.register_node("dg_trees:pine_trunk", {
 	description = "Pine Trunk",
 	tiles = {
-		"trees_pine_trunk_top.png",
-		"trees_pine_trunk_top.png",
-		"trees_pine_trunk_side.png",
+		"dg_trees_pine_trunk_top.png",
+		"dg_trees_pine_trunk_top.png",
+		"dg_trees_pine_trunk_side.png",
 	},
 	groups = {choppy = 2},
 })
 
-minetest.register_node("trees:pine_needles", {
+minetest.register_node("dg_trees:pine_needles", {
 	description = "Pine Needles",
-	tiles = {"trees_pine_needles.png"},
+	tiles = {"dg_trees_pine_needles.png"},
 	walkable = false,
 	groups = {dig_immediate = 2},
 })
+
+minetest.register_alias("trees:pine_trunk", "dg_trees:pine_trunk")
+minetest.register_alias("trees:pine_needles", "dg_trees:pine_needles")
 
 
 -- Decoration.
@@ -24,7 +27,7 @@ minetest.register_node("trees:pine_needles", {
 
 minetest.register_decoration({
 	deco_type = "schematic",
-	place_on = {"mapgen:grass"},
+	place_on = {"dg_mapgen:grass"},
 	sidelen = 16,
 	noise_params = {
 		offset = 0.0,
@@ -37,6 +40,6 @@ minetest.register_decoration({
 	biomes = {"grassland"},
 	y_min = -31000,
 	y_max = 31000,
-	schematic = minetest.get_modpath("trees").."/schematics/trees_pine_tree.mts",
+	schematic = minetest.get_modpath("dg_trees").."/schematics/dg_trees_pine_tree.mts",
 	flags = "place_center_x, place_center_z",
 })

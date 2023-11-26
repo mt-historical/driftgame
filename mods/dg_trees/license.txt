@@ -2,7 +2,7 @@ License of source code
 ----------------------
 
 The MIT License (MIT)
-Copyright (C) 2020 paramat
+Copyright (C) 2020-2023 paramat, wsor4035
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
@@ -24,11 +24,12 @@ For more details:
 https://opensource.org/licenses/MIT
 
 
-License of media
-----------------
+License of media (textures, schematics)
+---------------------------------------
 
 Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
 Copyright (C) 2020 paramat
+Copyright (C) 2020 Splizard
 
 You are free to:
 

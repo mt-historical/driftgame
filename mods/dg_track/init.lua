@@ -56,21 +56,24 @@ local np_blend = {
 
 -- Nodes
 
-minetest.register_node("track:road_black", {
+minetest.register_node("dg_track:road_black", {
 	description = "Road Black",
-	tiles = {"track_road_black.png"},
+	tiles = {"dg_track_road_black.png"},
 	is_ground_content = false,
 	groups = {cracky = 3},
 })
 
-minetest.register_node("track:road_white", {
+minetest.register_node("dg_track:road_white", {
 	description = "Road White",
-	tiles = {"track_road_white.png"},
+	tiles = {"dg_track_road_white.png"},
 	paramtype = "light",
 	light_source = 12,
 	is_ground_content = false,
 	groups = {cracky = 3},
 })
+
+minetest.register_alias("track:road_black", "dg_track:road_black")
+minetest.register_alias("track:road_white", "dg_track:road_white")
 
 
 -- Set mapgen flags to disable core mapgen decoration placement.
@@ -82,8 +85,8 @@ minetest.set_mapgen_setting("mg_flags", "caves,dungeons,light,nodecorations,biom
 
 -- Constants
 
-local c_roadblack = minetest.get_content_id("track:road_black")
-local c_roadwhite = minetest.get_content_id("track:road_white")
+local c_roadblack = minetest.get_content_id("dg_track:road_black")
+local c_roadwhite = minetest.get_content_id("dg_track:road_white")
 
 
 -- Initialise noise object, noise table, voxelmanip table
@@ -111,12 +114,12 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	--local t1 = os.clock()
 
 	local x1 = maxp.x
-	local y1 = maxp.y
+	--local y1 = maxp.y
 	local z1 = maxp.z
 	local x0 = minp.x
-	local y0 = minp.y
+	--local y0 = minp.y
 	local z0 = minp.z
-	
+
 	-- Noise map extends from x0/z0 - 5 to x1/z1 + 4, one node larger than the track brush
 	-- centre generation area, to allow sign change of noise to be detected along minimum
 	-- edges of track brush centre generation area.
@@ -193,7 +196,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 			n_xprepath2 = n_path2
 		end
 	end
-	
+
 	vm:set_data(data)
 	minetest.generate_decorations(vm)
 	vm:set_lighting({day = 0, night = 0})

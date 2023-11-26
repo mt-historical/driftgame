@@ -192,7 +192,7 @@ function car.on_detach_child(self, child)
 end
 
 
-local sound_cyc = 0
+--local sound_cyc = 0
 
 function car.on_step(self, dtime)
 	local vel = self.object:getvelocity()
@@ -251,7 +251,7 @@ function car.on_step(self, dtime)
 					taccmag = -grip * torm
 				end
 			end
- 		end
+		end
 	end
 
 	-- Early return for near-stationary vehicle with driver
@@ -284,7 +284,7 @@ function car.on_step(self, dtime)
 				end
 				noturnctrl = false
 			end
- 		end
+		end
 	end
 
 	-- If no turn control adjust turn towards zero
@@ -424,13 +424,13 @@ minetest.register_craftitem("driftcar:driftcar", {
 		end
 
 		pointed_thing.under.y = pointed_thing.under.y + 1.25
-		local car = minetest.add_entity(pointed_thing.under,
+		local car_entity = minetest.add_entity(pointed_thing.under,
 			"driftcar:driftcar")
-		if car then
+		if car_entity then
 			if placer then
-				car:setyaw(placer:get_look_horizontal())
+				car_entity:setyaw(placer:get_look_horizontal())
 			end
-			local player_name = placer and placer:get_player_name() or ""
+			--local player_name = placer and placer:get_player_name() or ""
 			itemstack:take_item()
 		end
 		return itemstack
