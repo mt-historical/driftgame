@@ -111,12 +111,12 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	--local t1 = os.clock()
 
 	local x1 = maxp.x
-	local y1 = maxp.y
+	--local y1 = maxp.y
 	local z1 = maxp.z
 	local x0 = minp.x
-	local y0 = minp.y
+	--local y0 = minp.y
 	local z0 = minp.z
-	
+
 	-- Noise map extends from x0/z0 - 5 to x1/z1 + 4, one node larger than the track brush
 	-- centre generation area, to allow sign change of noise to be detected along minimum
 	-- edges of track brush centre generation area.
@@ -193,7 +193,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 			n_xprepath2 = n_path2
 		end
 	end
-	
+
 	vm:set_data(data)
 	minetest.generate_decorations(vm)
 	vm:set_lighting({day = 0, night = 0})
