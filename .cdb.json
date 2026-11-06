@@ -1,0 +1,7 @@
+{
+	"$schema": "https://content.luanti.org/api/cdb_schema/",
+	"type": "GAME",
+	"title": "Driftgame",
+	"issue_tracker": "https://github.com/mt-historical/driftgame/issues",
+	"repo": "https://github.com/mt-historical/driftgame"
+}
