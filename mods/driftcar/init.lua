@@ -14,11 +14,9 @@ local TDEC = 0.24 -- Turn deceleration on no control input, in radians/s^2
 
 -- End of parameters
 
-
 -- Constants
 
 local sztorqh = SZTORQ / 2
-
 
 -- Functions
 
@@ -30,11 +28,9 @@ local function get_sign(n)
 	end
 end
 
-
 local function get_vecmag(vec)
 	return math.sqrt(vec.x ^ 2 + vec.z ^ 2)
 end
-
 
 local function get_theta(vec) -- returns 0 to PI * 2
 	if vec.z == 0 then
@@ -49,13 +45,11 @@ local function get_theta(vec) -- returns 0 to PI * 2
 	return math.atan(-vec.x / vec.z)
 end
 
-
 local function get_veccomp(vecmag, theta, y)
 	local x = -math.sin(theta) * vecmag
-	local z =  math.cos(theta) * vecmag
-	return {x = x, y = y, z = z}
+	local z = math.cos(theta) * vecmag
+	return { x = x, y = y, z = z }
 end
-
 
 local function wrap_yaw(yaw) -- wrap to 0 to PI * 2
 	local fmod = math.fmod(yaw, math.pi * 2)
@@ -64,7 +58,6 @@ local function wrap_yaw(yaw) -- wrap to 0 to PI * 2
 	end
 	return fmod
 end
-
 
 local function angbet(theta1, theta2) -- theta1 relative to theta2, -PI to PI
 	local ang = theta1 - theta2
@@ -77,12 +70,11 @@ local function angbet(theta1, theta2) -- theta1 relative to theta2, -PI to PI
 	return ang
 end
 
-
 local function add_smoke_particle(pos, player_name)
-	minetest.add_particle({
+	core.add_particle({
 		pos = pos,
-		velocity = {x = 0, y = 0, z = 0},
-		acceleration = {x = 0, y = 0, z = 0},
+		velocity = { x = 0, y = 0, z = 0 },
+		acceleration = { x = 0, y = 0, z = 0 },
 		expirationtime = 0.25,
 		size = 2.8,
 		collisiondetection = false,
@@ -93,15 +85,14 @@ local function add_smoke_particle(pos, player_name)
 	})
 end
 
-
 -- Entity
 
 local car = {
 	initial_properties = {
 		visual = "wielditem",
 		wield_item = "driftcar:blue_nodebox",
-		visual_size = {x = 1.667, y = 1.667}, -- Scale-up of nodebox is these * 1.5
-		collisionbox = {-0.53, -0.75, -0.53, 0.53, 0.75, 0.53},
+		visual_size = { x = 1.667, y = 1.667 }, -- Scale-up of nodebox is these * 1.5
+		collisionbox = { -0.53, -0.75, -0.53, 0.53, 0.75, 0.53 },
 		stepheight = 0.6,
 		physical = true,
 		collide_with_objects = false,
@@ -113,8 +104,7 @@ local car = {
 	rot = 0,
 }
 
-minetest.register_entity("driftcar:driftcar", car)
-
+core.register_entity("driftcar:driftcar", car)
 
 -- Entity functions
 
@@ -128,9 +118,9 @@ function car.on_rightclick(self, clicker)
 		self.driver = nil
 		clicker:set_detach()
 		player_api.player_attached[name] = false
-		player_api.set_animation(clicker, "stand" , 30)
+		player_api.set_animation(clicker, "stand", 30)
 		local pos = clicker:getpos()
-		minetest.after(0.1, function()
+		core.after(0.1, function()
 			clicker:setpos(pos)
 		end)
 	elseif not self.driver then
@@ -144,21 +134,18 @@ function car.on_rightclick(self, clicker)
 			clicker:set_detach()
 		end
 		self.driver = name
-		clicker:set_attach(self.object, "",
-			{x = 0, y = -3, z = 0}, {x = 0, y = 0, z = 0})
+		clicker:set_attach(self.object, "", { x = 0, y = -3, z = 0 }, { x = 0, y = 0, z = 0 })
 		player_api.player_attached[name] = true
-		minetest.after(0.2, function()
-			player_api.set_animation(clicker, "sit" , 30)
+		core.after(0.2, function()
+			player_api.set_animation(clicker, "sit", 30)
 		end)
 		clicker:set_look_horizontal(self.object:getyaw())
 	end
 end
 
-
 function car.on_activate(self, staticdata, dtime_s)
-	self.object:set_armor_groups({immortal = 1})
+	self.object:set_armor_groups({ immortal = 1 })
 end
-
 
 function car.on_punch(self, puncher)
 	if not puncher or not puncher:is_player() or self.removed then
@@ -178,19 +165,17 @@ function car.on_punch(self, puncher)
 		local inv = puncher:get_inventory()
 		local leftover = inv:add_item("main", "driftcar:driftcar")
 		if not leftover:is_empty() then
-			minetest.add_item(self.object:getpos(), leftover)
+			core.add_item(self.object:getpos(), leftover)
 		end
-		minetest.after(0.1, function()
+		core.after(0.1, function()
 			self.object:remove()
 		end)
 	end
 end
 
-
 function car.on_detach_child(self, child)
 	self.driver = nil
 end
-
 
 --local sound_cyc = 0
 
@@ -200,16 +185,13 @@ function car.on_step(self, dtime)
 	-- Early return for near-stationary vehicle with no driver
 	if not self.driver and velmag < 0.01 and vel.y == 0 then
 		self.object:setpos(self.object:getpos())
-		self.object:setvelocity({x = 0, y = 0, z = 0})
-		self.object:setacceleration({x = 0, y = 0, z = 0})
+		self.object:setvelocity({ x = 0, y = 0, z = 0 })
+		self.object:setacceleration({ x = 0, y = 0, z = 0 })
 		return
 	end
 
 	-- Angle of yaw relative to velocity, -PI to PI
-	local yawrtvel = angbet(
-		wrap_yaw(self.object:getyaw()),
-		get_theta(vel)
-	)
+	local yawrtvel = angbet(wrap_yaw(self.object:getyaw()), get_theta(vel))
 	-- Velocity component linear to car
 	local linvel = math.cos(yawrtvel) * velmag
 	local abslinvel = math.abs(linvel)
@@ -217,8 +199,8 @@ function car.on_step(self, dtime)
 	-- Touch ground bool
 	local under_pos = self.object:getpos()
 	under_pos.y = under_pos.y - 0.8
-	local node_under = minetest.get_node(under_pos)
-	local nodedef_under = minetest.registered_nodes[node_under.name]
+	local node_under = core.get_node(under_pos)
+	local nodedef_under = core.registered_nodes[node_under.name]
 	local touch = nodedef_under.walkable
 	-- On road bool
 	local onroad = true
@@ -234,7 +216,7 @@ function car.on_step(self, dtime)
 
 	-- Controls
 	if self.driver and touch then
-		local driver_objref = minetest.get_player_by_name(self.driver)
+		local driver_objref = core.get_player_by_name(self.driver)
 		if driver_objref then
 			local ctrl = driver_objref:get_player_control()
 			if ctrl.up or ctrl.down then
@@ -257,8 +239,8 @@ function car.on_step(self, dtime)
 	-- Early return for near-stationary vehicle with driver
 	if taccmag == 0 and velmag < 0.01 and vel.y == 0 then
 		self.object:setpos(self.object:getpos())
-		self.object:setvelocity({x = 0, y = 0, z = 0})
-		self.object:setacceleration({x = 0, y = 0, z = 0})
+		self.object:setvelocity({ x = 0, y = 0, z = 0 })
+		self.object:setacceleration({ x = 0, y = 0, z = 0 })
 		return
 	end
 
@@ -266,7 +248,7 @@ function car.on_step(self, dtime)
 	local noturnctrl = true
 
 	if self.driver and touch then
-		local driver_objref = minetest.get_player_by_name(self.driver)
+		local driver_objref = core.get_player_by_name(self.driver)
 		if driver_objref then
 			local ctrl = driver_objref:get_player_control()
 			if ctrl.left then
@@ -332,7 +314,7 @@ function car.on_step(self, dtime)
 
 	-- 4. Tire lateral friction
 	-- Velocity component lateral to car
-	local tlfacc = {x = 0, y = 0, z = 0}
+	local tlfacc = { x = 0, y = 0, z = 0 }
 	if touch then
 		local latvel = math.sin(yawrtvel) * velmag
 		local tlfaccmag = math.min(math.max(latvel * 32, -grip), grip)
@@ -354,23 +336,23 @@ function car.on_step(self, dtime)
 			add_smoke_particle({
 				x = opos.x + srcomp1x,
 				y = opos.y,
-				z = opos.z + srcomp1z
-				}, self.driver)
+				z = opos.z + srcomp1z,
+			}, self.driver)
 			add_smoke_particle({
 				x = opos.x - srcomp1x,
 				y = opos.y,
-				z = opos.z - srcomp1z
-				}, self.driver)
+				z = opos.z - srcomp1z,
+			}, self.driver)
 			add_smoke_particle({
 				x = opos.x + srcomp2x,
 				y = opos.y,
-				z = opos.z + srcomp2z
-				}, self.driver)
+				z = opos.z + srcomp2z,
+			}, self.driver)
 			add_smoke_particle({
 				x = opos.x - srcomp2x,
 				y = opos.y,
-				z = opos.z - srcomp2z
-				}, self.driver)
+				z = opos.z - srcomp2z,
+			}, self.driver)
 		end
 	end
 
@@ -397,26 +379,26 @@ function car.on_step(self, dtime)
 	self.object:setyaw(wrap_yaw(self.object:getyaw() + self.rot * dtime * turm))
 end
 
-
 -- Craftitem
 
-minetest.register_craftitem("driftcar:driftcar", {
+core.register_craftitem("driftcar:driftcar", {
 	description = "Drift Car",
 	inventory_image = "driftcar_new_front.png",
 	wield_image = "driftcar_new_front.png",
-	wield_scale = {x = 2, y = 2, z = 2},
+	wield_scale = { x = 2, y = 2, z = 2 },
 
 	on_place = function(itemstack, placer, pointed_thing)
 		local under = pointed_thing.under
-		local node = minetest.get_node(under)
-		local udef = minetest.registered_nodes[node.name]
+		local node = core.get_node(under)
+		local udef = core.registered_nodes[node.name]
 
 		-- Run any on_rightclick function of pointed node instead
-		if udef and udef.on_rightclick and
-				not (placer and placer:is_player() and
-				placer:get_player_control().sneak) then
-			return udef.on_rightclick(under, node, placer, itemstack,
-				pointed_thing) or itemstack
+		if
+			udef
+			and udef.on_rightclick
+			and not (placer and placer:is_player() and placer:get_player_control().sneak)
+		then
+			return udef.on_rightclick(under, node, placer, itemstack, pointed_thing) or itemstack
 		end
 
 		if pointed_thing.type ~= "node" then
@@ -424,8 +406,7 @@ minetest.register_craftitem("driftcar:driftcar", {
 		end
 
 		pointed_thing.under.y = pointed_thing.under.y + 1.25
-		local car_entity = minetest.add_entity(pointed_thing.under,
-			"driftcar:driftcar")
+		local car_entity = core.add_entity(pointed_thing.under, "driftcar:driftcar")
 		if car_entity then
 			if placer then
 				car_entity:setyaw(placer:get_look_horizontal())
@@ -437,14 +418,12 @@ minetest.register_craftitem("driftcar:driftcar", {
 	end,
 })
 
-
 -- Give to new player
 
-minetest.register_on_newplayer(function(player)
+core.register_on_newplayer(function(player)
 	local inv = player:get_inventory()
 	inv:add_item("main", "driftcar:driftcar")
 end)
-
 
 -- Nodebox
 
@@ -460,7 +439,7 @@ end)
 -- 'wielditem'-visual entity 'visual_size' = 2.5 / 1.5 = 1.667, because a
 -- 'wielditem'-visual entity is automatically scaled up by 1.5.
 
-minetest.register_node("driftcar:blue_nodebox", {
+core.register_node("driftcar:blue_nodebox", {
 	description = "Drift Car Blue Nodebox",
 	tiles = { -- Top, base, right, left, front, back
 		"driftcar_new_top.png",
@@ -475,13 +454,13 @@ minetest.register_node("driftcar:blue_nodebox", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-		--   wmin,  hmin,  lmin,  wmax,  hmax,  lmax
-			{-0.3,   0.05, -0.5,   0.3,   0.3,   0.4},  -- Upper
-			{-0.3,  -0.25, -0.5,   0.3,   0.05,  0.5},  -- Lower
-			{-0.3,  -0.3,  -0.5,  -0.2,  -0.05, -0.25}, -- Wheels
-			{ 0.2,  -0.3,  -0.5,   0.3,  -0.05, -0.25},
-			{-0.3,  -0.3,   0.25, -0.2,  -0.05,  0.5},
-			{ 0.2,  -0.3,   0.25,  0.3,  -0.05,  0.5},
+			--   wmin,  hmin,  lmin,  wmax,  hmax,  lmax
+			{ -0.3, 0.05, -0.5, 0.3, 0.3, 0.4 }, -- Upper
+			{ -0.3, -0.25, -0.5, 0.3, 0.05, 0.5 }, -- Lower
+			{ -0.3, -0.3, -0.5, -0.2, -0.05, -0.25 }, -- Wheels
+			{ 0.2, -0.3, -0.5, 0.3, -0.05, -0.25 },
+			{ -0.3, -0.3, 0.25, -0.2, -0.05, 0.5 },
+			{ 0.2, -0.3, 0.25, 0.3, -0.05, 0.5 },
 		},
 	},
 })
